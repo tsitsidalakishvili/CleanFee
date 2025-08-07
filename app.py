@@ -830,7 +830,7 @@ if 'user_profile' not in st.session_state:
         'name': '',
         'phone': '',
         'address': '',
-        'preferred_time': 'Morning',
+        'preferred_time': 'Morning (8AM-12PM)',
         'total_spent': 0,
         'total_bookings': 0
     }
@@ -1625,7 +1625,7 @@ def profile_page():
             for key in ['bookings', 'completed_bookings', 'favorites', 'notifications']:
                 st.session_state[key] = []
             st.session_state.user_profile = {
-                'name': '', 'phone': '', 'address': '', 'preferred_time': 'Morning',
+                'name': '', 'phone': '', 'address': '', 'preferred_time': 'Morning (8AM-12PM)',
                 'total_spent': 0, 'total_bookings': 0
             }
             st.success("App reset successfully!")
