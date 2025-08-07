@@ -38,12 +38,12 @@ st.markdown("""
     
     /* App header */
     .app-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: linear-gradient(135deg, #f8f4f0 0%, #e8ddd4 100%);
+        color: #5d4e37;
         padding: 1rem 0.5rem;
         margin: -0.5rem -0.5rem 0.5rem -0.5rem;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(93, 78, 55, 0.1);
     }
     
     .app-title {
@@ -110,14 +110,14 @@ st.markdown("""
     .cleaner-price {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #27ae60;
+        color: #7a9b76;
         margin: 0.2rem 0;
     }
     
     .cleaner-experience {
         font-size: 0.7rem;
-        color: #7f8c8d;
-        background: #f8f9fa;
+        color: #8a7968;
+        background: #f7f5f3;
         padding: 0.2rem 0.5rem;
         border-radius: 10px;
         display: inline-block;
@@ -126,8 +126,8 @@ st.markdown("""
     
     /* Mobile skill tags */
     .mobile-skill-tag {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
+        background: linear-gradient(135deg, #d4c5b9, #c7b299);
+        color: #5d4e37;
         padding: 0.2rem 0.5rem;
         border-radius: 12px;
         font-size: 0.65rem;
@@ -138,7 +138,7 @@ st.markdown("""
     
     /* Mobile buttons */
     .mobile-btn {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #a8998a, #8f7a67);
         color: white;
         border: none;
         border-radius: 25px;
@@ -149,23 +149,23 @@ st.markdown("""
         margin: 0.3rem 0;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 2px 10px rgba(168, 153, 138, 0.3);
     }
     
     .mobile-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 15px rgba(168, 153, 138, 0.4);
     }
     
     .mobile-btn-secondary {
         background: transparent;
-        color: #667eea;
-        border: 2px solid #667eea;
+        color: #8f7a67;
+        border: 2px solid #8f7a67;
         box-shadow: none;
     }
     
     .mobile-btn-secondary:hover {
-        background: #667eea;
+        background: #8f7a67;
         color: white;
     }
     
@@ -188,6 +188,7 @@ st.markdown("""
         align-items: center;
         max-width: 600px;
         margin: 0 auto;
+        flex-wrap: nowrap;
     }
     
     .nav-item {
@@ -198,21 +199,24 @@ st.markdown("""
         color: #95a5a6;
         transition: color 0.2s ease;
         cursor: pointer;
-        padding: 0.3rem;
+        padding: 0.2rem 0.1rem;
+        min-width: 0;
+        flex: 1;
     }
     
     .nav-item.active {
-        color: #667eea;
+        color: #8f7a67;
     }
     
     .nav-icon {
-        font-size: 1.5rem;
-        margin-bottom: 0.2rem;
+        font-size: 1.1rem;
+        margin-bottom: 0.1rem;
     }
     
     .nav-label {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         font-weight: 500;
+        white-space: nowrap;
     }
     
     /* Mobile forms */
@@ -247,24 +251,24 @@ st.markdown("""
     
     /* Success messages */
     .mobile-success {
-        background: linear-gradient(135deg, #00b894, #00cec9);
+        background: linear-gradient(135deg, #9bb99d, #7a9b76);
         color: white;
         padding: 1rem;
         border-radius: 16px;
         margin: 1rem 0;
         text-align: center;
         font-weight: 500;
-        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+        box-shadow: 0 4px 15px rgba(122, 155, 118, 0.3);
     }
     
     /* Review cards */
     .mobile-review-card {
-        background: white;
+        background: #fdfcfb;
         border-radius: 12px;
         padding: 1rem;
         margin: 0.8rem 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        border-left: 4px solid #667eea;
+        box-shadow: 0 2px 8px rgba(93, 78, 55, 0.06);
+        border-left: 4px solid #a8998a;
     }
     
     .review-header {
@@ -430,6 +434,23 @@ st.markdown("""
             padding: 0.8rem;
             margin: 0.3rem 0;
         }
+        
+        .bottom-nav {
+            padding: 0.5rem 0 0.3rem 0;
+        }
+        
+        .nav-item {
+            padding: 0.1rem 0.05rem;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+            margin-bottom: 0.05rem;
+        }
+        
+        .nav-label {
+            font-size: 0.55rem;
+        }
     }
     
     /* Hide sidebar toggle */
@@ -504,8 +525,8 @@ st.markdown("""
     }
     
     .search-input:focus {
-        border-color: #667eea;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        border-color: #a8998a;
+        box-shadow: 0 4px 15px rgba(168, 153, 138, 0.2);
         outline: none;
     }
     
@@ -514,7 +535,7 @@ st.markdown("""
         right: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #667eea;
+        color: #a8998a;
         font-size: 1.2rem;
     }
     
@@ -539,7 +560,7 @@ st.markdown("""
     
     /* Notification badge */
     .notification-badge {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        background: linear-gradient(135deg, #d4a574, #c8956d);
         color: white;
         border-radius: 50%;
         width: 20px;
@@ -567,8 +588,8 @@ st.markdown("""
     
     /* Loading spinner */
     .loading-spinner {
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #667eea;
+        border: 3px solid #f7f5f3;
+        border-top: 3px solid #a8998a;
         border-radius: 50%;
         width: 30px;
         height: 30px;
@@ -586,7 +607,7 @@ st.markdown("""
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background: #27ae60;
+        background: #7a9b76;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -601,12 +622,12 @@ st.markdown("""
     
     /* Enhanced form styling */
     .form-section {
-        background: white;
+        background: #fdfcfb;
         border-radius: 16px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        border-left: 4px solid #667eea;
+        box-shadow: 0 4px 20px rgba(93, 78, 55, 0.08);
+        border-left: 4px solid #a8998a;
     }
     
     .form-section-title {
@@ -621,13 +642,13 @@ st.markdown("""
     
     /* Stats cards */
     .stats-card {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #d4c5b9, #a8998a);
         color: white;
         border-radius: 16px;
         padding: 1rem;
         text-align: center;
         margin: 0.5rem;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(168, 153, 138, 0.3);
     }
     
     .stats-number {
@@ -657,9 +678,9 @@ st.markdown("""
     }
     
     .sort-pill.active {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #a8998a, #8f7a67);
         color: white;
-        border-color: #667eea;
+        border-color: #a8998a;
         transform: scale(1.05);
     }
     
@@ -670,12 +691,12 @@ st.markdown("""
     
     /* Cleaner application specific styles */
     .application-step {
-        background: white;
+        background: #fdfcfb;
         border-radius: 16px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        border-left: 4px solid #27ae60;
+        box-shadow: 0 4px 20px rgba(93, 78, 55, 0.08);
+        border-left: 4px solid #7a9b76;
     }
     
     .step-header {
@@ -688,7 +709,7 @@ st.markdown("""
     }
     
     .step-number {
-        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        background: linear-gradient(135deg, #7a9b76, #9bb99d);
         color: white;
         width: 30px;
         height: 30px;
@@ -713,18 +734,18 @@ st.markdown("""
     }
     
     .verification-item.verified {
-        border-color: #27ae60;
-        background: #d4edda;
+        border-color: #7a9b76;
+        background: #e8f5e8;
     }
     
     .verification-item.pending {
-        border-color: #f39c12;
-        background: #fff3cd;
+        border-color: #d4a574;
+        background: #fdf6e8;
     }
     
     .verification-item.failed {
-        border-color: #e74c3c;
-        background: #f8d7da;
+        border-color: #d49999;
+        background: #f5e8e8;
     }
     
     .upload-area {
@@ -1413,38 +1434,80 @@ def render_bottom_nav():
 # Enhanced Navigation with new features
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 with col1:
-    if st.button("🏠", key="nav_home", help="Home"):
+    if st.button("🏠", key="nav_home", help="Home", use_container_width=True):
         st.session_state.page = "home"
         st.rerun()
 with col2:
-    if st.button("📅", key="nav_bookings", help="My Bookings"):
+    if st.button("📋", key="nav_bookings", help="My Bookings", use_container_width=True):
         st.session_state.page = "bookings"
         st.rerun()
 with col3:
     # Notifications with badge
     notification_count = len([n for n in st.session_state.notifications if not n['read']])
-    notif_label = f"🔔 ({notification_count})" if notification_count > 0 else "🔔"
-    if st.button(notif_label, key="nav_notifications", help="Notifications"):
+    notif_label = f"🔔" if notification_count > 0 else "🔔"
+    if st.button(notif_label, key="nav_notifications", help="Notifications", use_container_width=True):
         st.session_state.page = "notifications"
         st.rerun()
 with col4:
     # Favorites
-    if st.button("💖", key="nav_favorites", help="Favorites"):
+    if st.button("⭐", key="nav_favorites", help="Favorites", use_container_width=True):
         st.session_state.page = "favorites"
         st.rerun()
 with col5:
     # Become a Cleaner
-    if st.button("🧹✨", key="nav_become_cleaner", help="Become a Cleaner"):
+    if st.button("🧹", key="nav_become_cleaner", help="Become a Cleaner", use_container_width=True):
         st.session_state.page = "become_cleaner"
         st.rerun()
 with col6:
-    if st.button("👤", key="nav_profile", help="Profile"):
+    if st.button("👤", key="nav_profile", help="Profile", use_container_width=True):
         st.session_state.page = "profile"
         st.rerun()
 
-# Hide the navigation buttons with CSS
+# Style the navigation buttons for mobile
 st.markdown("""
 <style>
+    /* Navigation button styling */
+    .stButton > button {
+        height: 2.5rem !important;
+        width: 100% !important;
+        font-size: 1rem !important;
+        padding: 0.2rem !important;
+        border-radius: 8px !important;
+        border: none !important;
+        background-color: transparent !important;
+        color: #95a5a6 !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: rgba(143, 122, 103, 0.1) !important;
+        color: #8f7a67 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    .stButton > button:focus {
+        background-color: rgba(143, 122, 103, 0.15) !important;
+        color: #8f7a67 !important;
+        box-shadow: 0 0 0 2px rgba(143, 122, 103, 0.3) !important;
+    }
+    
+    /* Mobile responsive navigation */
+    @media (max-width: 768px) {
+        .stButton > button {
+            height: 2.2rem !important;
+            font-size: 0.9rem !important;
+            padding: 0.1rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .stButton > button {
+            height: 2rem !important;
+            font-size: 0.8rem !important;
+            padding: 0.05rem !important;
+        }
+    }
+    
     .row-widget.stHorizontal > div {
         display: none;
     }
@@ -2404,5 +2467,4 @@ elif st.session_state.page == 'become_cleaner':
 elif st.session_state.page == 'profile':
     profile_page()
 
-# Render bottom navigation
-render_bottom_nav() 
+# Navigation is now handled by the column buttons above 
