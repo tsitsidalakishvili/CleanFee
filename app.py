@@ -1,12 +1,96 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta, date
+import requests
+import json
+import os
 from data.cleaners_data import (
     get_cleaners_dataframe, 
     get_cleaner_reviews, 
     get_cleaner_availability,
     CLEANERS_DATA
 )
+
+# Facebook OAuth configuration
+FACEBOOK_APP_ID = st.secrets.get("FACEBOOK_APP_ID", "your_facebook_app_id")
+FACEBOOK_APP_SECRET = st.secrets.get("FACEBOOK_APP_SECRET", "your_facebook_app_secret")
+REDIRECT_URI = st.secrets.get("REDIRECT_URI", "https://your-app-url.streamlit.app")
+
+# Facebook OAuth functions
+def get_facebook_login_url():
+    """Generate Facebook OAuth login URL"""
+    base_url = "https://www.facebook.com/v18.0/dialog/oauth"
+    params = {
+        "client_id": FACEBOOK_APP_ID,
+        "redirect_uri": REDIRECT_URI,
+        "scope": "email,public_profile",
+        "response_type": "code",
+        "state": "cleanfee_auth"
+    }
+    
+    param_string = "&".join([f"{k}={v}" for k, v in params.items()])
+    return f"{base_url}?{param_string}"
+
+def exchange_code_for_token(code):
+    """Exchange authorization code for access token"""
+    token_url = "https://graph.facebook.com/v18.0/oauth/access_token"
+    params = {
+        "client_id": FACEBOOK_APP_ID,
+        "client_secret": FACEBOOK_APP_SECRET,
+        "redirect_uri": REDIRECT_URI,
+        "code": code
+    }
+    
+    try:
+        response = requests.get(token_url, params=params)
+        return response.json()
+    except Exception as e:
+        st.error(f"Error exchanging code for token: {e}")
+        return None
+
+def get_facebook_user_info(access_token):
+    """Get user information from Facebook"""
+    user_url = "https://graph.facebook.com/v18.0/me"
+    params = {
+        "access_token": access_token,
+        "fields": "id,name,email,picture.type(large),first_name,last_name"
+    }
+    
+    try:
+        response = requests.get(user_url, params=params)
+        return response.json()
+    except Exception as e:
+        st.error(f"Error getting user info: {e}")
+        return None
+
+def render_facebook_login_button():
+    """Render Facebook login button"""
+    login_url = get_facebook_login_url()
+    
+    st.markdown(f"""
+    <div style="text-align: center; margin: 1rem 0;">
+        <a href="{login_url}" target="_self" style="text-decoration: none;">
+            <div style="
+                background: linear-gradient(135deg, #1877f2, #42a5f5);
+                color: white;
+                padding: 0.8rem 2rem;
+                border-radius: 25px;
+                font-weight: 600;
+                font-size: 1rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3);
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            ">
+                <span style="font-size: 1.2rem;">📘</span>
+                Continue with Facebook
+            </div>
+        </a>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Page configuration
 st.set_page_config(
@@ -863,6 +947,48 @@ if 'current_application' not in st.session_state:
     st.session_state.current_application = {}
 if 'application_step' not in st.session_state:
     st.session_state.application_step = 1
+if 'facebook_user' not in st.session_state:
+    st.session_state.facebook_user = None
+if 'facebook_authenticated' not in st.session_state:
+    st.session_state.facebook_authenticated = False
+
+# Handle Facebook OAuth callback
+def handle_facebook_callback():
+    """Handle Facebook OAuth callback"""
+    query_params = st.query_params
+    
+    if "code" in query_params and "state" in query_params:
+        code = query_params["code"]
+        state = query_params["state"]
+        
+        if state == "cleanfee_auth":
+            # Exchange code for token
+            token_data = exchange_code_for_token(code)
+            
+            if token_data and "access_token" in token_data:
+                # Get user info
+                user_info = get_facebook_user_info(token_data["access_token"])
+                
+                if user_info:
+                    st.session_state.facebook_user = user_info
+                    st.session_state.facebook_authenticated = True
+                    
+                    # Pre-fill application with Facebook data
+                    st.session_state.current_application.update({
+                        'first_name': user_info.get('first_name', ''),
+                        'last_name': user_info.get('last_name', ''),
+                        'email': user_info.get('email', ''),
+                        'facebook_id': user_info.get('id', ''),
+                        'profile_picture': user_info.get('picture', {}).get('data', {}).get('url', '')
+                    })
+                    
+                    # Clear query params and redirect to cleaner application
+                    st.query_params.clear()
+                    st.session_state.page = "become_cleaner"
+                    st.rerun()
+
+# Call callback handler
+handle_facebook_callback()
 
 def display_star_rating(rating):
     """Display star rating"""
@@ -1732,6 +1858,44 @@ def become_cleaner_page():
 
 def show_application_intro():
     """Show the introduction and benefits of becoming a cleaner"""
+    # Facebook login option
+    if not st.session_state.facebook_authenticated:
+        st.markdown("""
+        <div class="form-section">
+            <div class="form-section-title">
+                <span style="font-size: 1.5rem;">🚀</span>
+                Quick Start with Facebook
+            </div>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Sign up faster and build trust with customers by connecting your Facebook account.
+                We'll pre-fill your application with your profile information.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        render_facebook_login_button()
+        
+        st.markdown("""
+        <div style="text-align: center; margin: 1rem 0; color: #666;">
+            <span>or</span>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        # Show Facebook user info
+        user = st.session_state.facebook_user
+        st.markdown(f"""
+        <div class="mobile-success">
+            <div style="display: flex; align-items: center; gap: 1rem; justify-content: center;">
+                <img src="{user.get('picture', {}).get('data', {}).get('url', '')}" 
+                     style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white;">
+                <div>
+                    <div style="font-weight: 600;">Welcome, {user.get('name', '')}!</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Connected via Facebook</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
     # Earnings potential
     st.markdown("""
     <div class="earning-estimate">
@@ -1836,15 +2000,38 @@ def show_personal_info_form():
         </div>
     """, unsafe_allow_html=True)
     
-    # Form fields
+    # Show Facebook connection status
+    if st.session_state.facebook_authenticated:
+        user = st.session_state.facebook_user
+        st.markdown(f"""
+        <div style="background: #e8f5e8; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #7a9b76;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>📘</span>
+                <span style="font-weight: 600; color: #2c3e50;">Facebook Profile Connected</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">
+                Some fields have been pre-filled from your Facebook profile
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Form fields - pre-fill with Facebook data if available
+    facebook_data = st.session_state.current_application if st.session_state.facebook_authenticated else {}
+    
     col1, col2 = st.columns(2)
     with col1:
-        first_name = st.text_input("First Name *", placeholder="Enter your first name")
-        email = st.text_input("Email Address *", placeholder="your.email@example.com")
+        first_name = st.text_input("First Name *", 
+                                  value=facebook_data.get('first_name', ''),
+                                  placeholder="Enter your first name")
+        email = st.text_input("Email Address *", 
+                             value=facebook_data.get('email', ''),
+                             placeholder="your.email@example.com")
         phone = st.text_input("Phone Number *", placeholder="(555) 123-4567")
     
     with col2:
-        last_name = st.text_input("Last Name *", placeholder="Enter your last name")
+        last_name = st.text_input("Last Name *", 
+                                 value=facebook_data.get('last_name', ''),
+                                 placeholder="Enter your last name")
         date_of_birth = st.date_input("Date of Birth *", 
                                      min_value=datetime(1930, 1, 1).date(),
                                      max_value=datetime.now().date(),
