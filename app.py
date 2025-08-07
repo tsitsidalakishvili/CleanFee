@@ -1671,7 +1671,8 @@ def show_personal_info_form():
     
     with col2:
         last_name = st.text_input("Last Name *", placeholder="Enter your last name")
-        date_of_birth = st.date_input("Date of Birth *", max_value=datetime.now().date())
+        date_of_birth = st.date_input("Date of Birth *", max_value=datetime.now().date(),
+                                     help="You must be at least 18 years old to apply")
         emergency_contact = st.text_input("Emergency Contact *", placeholder="Emergency contact number")
     
     address = st.text_area("Home Address *", placeholder="Full address including city, state, zip code")
@@ -1679,7 +1680,8 @@ def show_personal_info_form():
     # ID verification
     st.markdown("### 🆔 Identity Verification")
     id_type = st.selectbox("ID Type *", ["Driver's License", "State ID", "Passport", "Military ID"])
-    id_number = st.text_input("ID Number *", placeholder="Enter ID number", type="password")
+    id_number = st.text_input("ID Number *", placeholder="Enter ID number", type="password", 
+                             help="This information is encrypted and used only for verification purposes")
     
     st.markdown("</div>", unsafe_allow_html=True)
     
@@ -1692,7 +1694,32 @@ def show_personal_info_form():
     
     with col2:
         if st.button("Continue →", type="primary", use_container_width=True):
-            if all([first_name, last_name, email, phone, address, id_number]):
+            # Check required fields
+            missing_fields = []
+            if not first_name.strip():
+                missing_fields.append("First Name")
+            if not last_name.strip():
+                missing_fields.append("Last Name") 
+            if not email.strip():
+                missing_fields.append("Email Address")
+            if not phone.strip():
+                missing_fields.append("Phone Number")
+            if not address.strip():
+                missing_fields.append("Home Address")
+            if not emergency_contact.strip():
+                missing_fields.append("Emergency Contact")
+            if not id_number.strip():
+                missing_fields.append("ID Number")
+            
+            # Check age requirement (18+)
+            today = datetime.now().date()
+            age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+            
+            if missing_fields:
+                st.error(f"Please fill in these required fields: {', '.join(missing_fields)}")
+            elif age < 18:
+                st.error("You must be at least 18 years old to apply as a cleaner.")
+            else:
                 st.session_state.current_application.update({
                     'first_name': first_name,
                     'last_name': last_name,
@@ -1706,8 +1733,6 @@ def show_personal_info_form():
                 })
                 st.session_state.application_step = 3
                 st.rerun()
-            else:
-                st.error("Please fill in all required fields marked with *")
 
 def show_professional_info_form():
     """Step 3: Professional background form"""
