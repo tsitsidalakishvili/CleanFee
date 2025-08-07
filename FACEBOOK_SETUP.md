@@ -111,16 +111,59 @@ CleanFee now supports Facebook login for cleaner registration, making the signup
 ## Troubleshooting
 
 ### Common Issues
-1. **"App Not Setup"**: App needs to be Live in Facebook settings
-2. **"Invalid Redirect URI"**: Check OAuth settings match exactly
-3. **"App Secret Required"**: Ensure secrets are properly configured
-4. **"Permission Denied"**: Check app permissions and review status
+
+#### 1. "www.facebook.com refused to connect"
+**Cause**: Facebook blocks iframe embedding for security
+**Solutions**:
+- ✅ **New tab approach**: Button now opens Facebook in new tab
+- ✅ **Alternative verification**: Manual social profile entry
+- ✅ **Graceful fallback**: Manual registration always available
+
+#### 2. "App Not Setup"  
+**Cause**: App needs to be Live in Facebook settings
+**Solution**: Go to App Review → Make app Live
+
+#### 3. "Invalid Redirect URI"
+**Cause**: OAuth settings don't match exactly
+**Solution**: Check redirect URIs match your app URL exactly
+
+#### 4. "App Secret Required"
+**Cause**: Secrets not properly configured
+**Solution**: Verify Streamlit secrets configuration
+
+#### 5. "Permission Denied"
+**Cause**: App permissions or review status issues
+**Solution**: Check app permissions and review status
+
+### Facebook Connection Alternatives
+
+If Facebook OAuth isn't working:
+
+1. **Social Profile URLs**: Users can manually enter their Facebook/LinkedIn profiles
+2. **Manual Registration**: Traditional form-based signup still works
+3. **Multiple Verification**: Support for LinkedIn, Instagram, other platforms
+4. **Professional Networks**: LinkedIn verification often preferred for services
+
+### Technical Solutions Implemented
+
+1. **New Tab Opening**: Avoids iframe restrictions
+2. **Error Handling**: Graceful fallbacks for all failure modes  
+3. **Alternative Verification**: Social profile URL collection
+4. **Progressive Enhancement**: Works with or without Facebook
+5. **Mobile Optimization**: Works on all devices
 
 ### Debug Steps
 1. Check Streamlit secrets configuration
-2. Verify Facebook app OAuth settings
+2. Verify Facebook app OAuth settings  
 3. Test with Facebook app test users
 4. Monitor browser network requests
 5. Check Streamlit logs for errors
+6. Try alternative verification methods
 
-Ready to launch! 🚀
+### Best Practices
+- Always provide manual registration option
+- Use social verification as enhancement, not requirement
+- Test thoroughly on mobile devices
+- Monitor conversion rates with/without social login
+
+Ready to launch with robust authentication! 🚀

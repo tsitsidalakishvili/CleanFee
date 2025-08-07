@@ -64,12 +64,33 @@ def get_facebook_user_info(access_token):
         return None
 
 def render_facebook_login_button():
-    """Render Facebook login button"""
+    """Render Facebook login button with multiple options"""
+    
+    # Check if Facebook is configured
+    if FACEBOOK_APP_ID == "your_facebook_app_id" or not FACEBOOK_APP_ID:
+        st.markdown("""
+        <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #d4a574;">
+            <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                🔧 Facebook Integration Setup Required
+            </div>
+            <div style="color: #666; font-size: 0.9rem;">
+                Facebook login will be available once the administrator configures the Facebook app credentials.
+                For now, please use the manual registration form below.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        return
+    
     login_url = get_facebook_login_url()
     
-    st.markdown(f"""
+    st.markdown("""
     <div style="text-align: center; margin: 1rem 0;">
-        <a href="{login_url}" target="_self" style="text-decoration: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.8rem; align-items: center;">
+    """, unsafe_allow_html=True)
+    
+    # Primary Facebook button (opens in new tab to avoid iframe issues)
+    st.markdown(f"""
+        <a href="{login_url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
             <div style="
                 background: linear-gradient(135deg, #1877f2, #42a5f5);
                 color: white;
@@ -84,13 +105,50 @@ def render_facebook_login_button():
                 display: inline-flex;
                 align-items: center;
                 gap: 0.5rem;
+                justify-content: center;
+                min-width: 280px;
             ">
                 <span style="font-size: 1.2rem;">📘</span>
                 Continue with Facebook
             </div>
         </a>
-    </div>
     """, unsafe_allow_html=True)
+    
+    # Alternative: Simple verification method
+    st.markdown("""
+        <div style="margin: 1rem 0; color: #666; font-size: 0.85rem; text-align: center;">
+            or verify with your Facebook profile URL
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Facebook profile URL verification (as backup)
+    facebook_profile = st.text_input(
+        "📘 Facebook Profile URL (Optional)",
+        placeholder="https://facebook.com/your.profile",
+        help="Share your Facebook profile to build trust with customers"
+    )
+    
+    if facebook_profile and facebook_profile.strip():
+        if "facebook.com" in facebook_profile:
+            st.markdown("""
+            <div style="background: #e8f5e8; padding: 0.8rem; border-radius: 8px; margin: 0.5rem 0; border-left: 4px solid #7a9b76;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>✅</span>
+                    <span style="font-weight: 600; color: #2c3e50;">Facebook Profile Added</span>
+                </div>
+                <div style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">
+                    This will be reviewed as part of your application
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            # Store the profile URL
+            if 'current_application' not in st.session_state:
+                st.session_state.current_application = {}
+            st.session_state.current_application['facebook_profile'] = facebook_profile.strip()
+        else:
+            st.error("Please enter a valid Facebook profile URL")
+    
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
 # Page configuration
 st.set_page_config(
@@ -954,41 +1012,124 @@ if 'facebook_authenticated' not in st.session_state:
 
 # Handle Facebook OAuth callback
 def handle_facebook_callback():
-    """Handle Facebook OAuth callback"""
+    """Handle Facebook OAuth callback with better error handling"""
     query_params = st.query_params
+    
+    if "error" in query_params:
+        error = query_params.get("error", "")
+        error_description = query_params.get("error_description", "")
+        st.error(f"Facebook authentication failed: {error_description or error}")
+        st.query_params.clear()
+        return
     
     if "code" in query_params and "state" in query_params:
         code = query_params["code"]
         state = query_params["state"]
         
         if state == "cleanfee_auth":
-            # Exchange code for token
-            token_data = exchange_code_for_token(code)
-            
-            if token_data and "access_token" in token_data:
-                # Get user info
-                user_info = get_facebook_user_info(token_data["access_token"])
+            try:
+                # Exchange code for token
+                token_data = exchange_code_for_token(code)
                 
-                if user_info:
-                    st.session_state.facebook_user = user_info
-                    st.session_state.facebook_authenticated = True
+                if token_data and "access_token" in token_data:
+                    # Get user info
+                    user_info = get_facebook_user_info(token_data["access_token"])
                     
-                    # Pre-fill application with Facebook data
-                    st.session_state.current_application.update({
-                        'first_name': user_info.get('first_name', ''),
-                        'last_name': user_info.get('last_name', ''),
-                        'email': user_info.get('email', ''),
-                        'facebook_id': user_info.get('id', ''),
-                        'profile_picture': user_info.get('picture', {}).get('data', {}).get('url', '')
-                    })
-                    
-                    # Clear query params and redirect to cleaner application
-                    st.query_params.clear()
-                    st.session_state.page = "become_cleaner"
-                    st.rerun()
+                    if user_info and "id" in user_info:
+                        st.session_state.facebook_user = user_info
+                        st.session_state.facebook_authenticated = True
+                        
+                        # Pre-fill application with Facebook data
+                        st.session_state.current_application.update({
+                            'first_name': user_info.get('first_name', ''),
+                            'last_name': user_info.get('last_name', ''),
+                            'email': user_info.get('email', ''),
+                            'facebook_id': user_info.get('id', ''),
+                            'profile_picture': user_info.get('picture', {}).get('data', {}).get('url', ''),
+                            'facebook_verified': True
+                        })
+                        
+                        # Show success message
+                        st.success("✅ Successfully connected with Facebook!")
+                        
+                        # Clear query params and redirect to cleaner application
+                        st.query_params.clear()
+                        st.session_state.page = "become_cleaner"
+                        st.rerun()
+                    else:
+                        st.error("Failed to get user information from Facebook. Please try manual registration.")
+                else:
+                    st.error("Failed to authenticate with Facebook. Please try manual registration.")
+            except Exception as e:
+                st.error(f"Facebook authentication error: {str(e)}. Please try manual registration.")
+                st.query_params.clear()
+
+# Alternative simple verification
+def render_simple_social_verification():
+    """Render simple social media verification as backup"""
+    st.markdown("""
+    <div class="form-section">
+        <div class="form-section-title">
+            <span style="font-size: 1.5rem;">🔗</span>
+            Social Media Verification (Optional)
+        </div>
+        <p style="color: #666; margin-bottom: 1rem;">
+            Share your social media profiles to build trust with customers. This helps verify your identity and professionalism.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        facebook_url = st.text_input(
+            "📘 Facebook Profile",
+            placeholder="https://facebook.com/yourname",
+            help="Your Facebook profile URL"
+        )
+        linkedin_url = st.text_input(
+            "💼 LinkedIn Profile",
+            placeholder="https://linkedin.com/in/yourname",
+            help="Your LinkedIn profile URL (professional verification)"
+        )
+    
+    with col2:
+        instagram_url = st.text_input(
+            "📸 Instagram Profile",
+            placeholder="https://instagram.com/yourname",
+            help="Your Instagram profile URL"
+        )
+        other_url = st.text_input(
+            "🌐 Other Profile",
+            placeholder="https://other-platform.com/yourname",
+            help="Any other professional profile or website"
+        )
+    
+    # Store social media profiles
+    social_profiles = {}
+    if facebook_url: social_profiles['facebook'] = facebook_url
+    if linkedin_url: social_profiles['linkedin'] = linkedin_url
+    if instagram_url: social_profiles['instagram'] = instagram_url
+    if other_url: social_profiles['other'] = other_url
+    
+    if social_profiles:
+        st.session_state.current_application['social_profiles'] = social_profiles
+        st.markdown("""
+        <div style="background: #e8f5e8; padding: 0.8rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #7a9b76;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span>✅</span>
+                <span style="font-weight: 600; color: #2c3e50;">Social Profiles Added</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #666; margin-top: 0.3rem;">
+                These will be reviewed to verify your identity and professionalism
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # Call callback handler
-handle_facebook_callback()
+try:
+    handle_facebook_callback()
+except Exception as e:
+    st.error(f"Authentication system error: {str(e)}")
 
 def display_star_rating(rating):
     """Display star rating"""
@@ -1876,10 +2017,14 @@ def show_application_intro():
         render_facebook_login_button()
         
         st.markdown("""
-        <div style="text-align: center; margin: 1rem 0; color: #666;">
-            <span>or</span>
+        <div style="text-align: center; margin: 1.5rem 0; color: #666;">
+            <hr style="width: 50%; margin: 1rem auto; border: 1px solid #e0e0e0;">
+            <span style="background: white; padding: 0 1rem;">or</span>
         </div>
         """, unsafe_allow_html=True)
+        
+        # Add simple social verification alternative
+        render_simple_social_verification()
     else:
         # Show Facebook user info
         user = st.session_state.facebook_user
