@@ -1671,7 +1671,10 @@ def show_personal_info_form():
     
     with col2:
         last_name = st.text_input("Last Name *", placeholder="Enter your last name")
-        date_of_birth = st.date_input("Date of Birth *", max_value=datetime.now().date(),
+        date_of_birth = st.date_input("Date of Birth *", 
+                                     min_value=datetime(1930, 1, 1).date(),
+                                     max_value=datetime.now().date(),
+                                     value=datetime(1990, 1, 1).date(),
                                      help="You must be at least 18 years old to apply")
         emergency_contact = st.text_input("Emergency Contact *", placeholder="Emergency contact number")
     
