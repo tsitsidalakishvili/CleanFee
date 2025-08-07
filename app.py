@@ -4,6 +4,9 @@ from datetime import datetime, timedelta, date
 import requests
 import json
 import os
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from data.cleaners_data import (
     get_cleaners_dataframe, 
     get_cleaner_reviews, 
@@ -11,7 +14,9 @@ from data.cleaners_data import (
     CLEANERS_DATA
 )
 
-# Facebook OAuth configuration
+# Facebook Business Integration Configuration
+FACEBOOK_PAGE_ID = st.secrets.get("FACEBOOK_PAGE_ID", "100078488780737")  # Your page ID
+FACEBOOK_ACCESS_TOKEN = st.secrets.get("FACEBOOK_ACCESS_TOKEN", "your_page_access_token")
 FACEBOOK_APP_ID = st.secrets.get("FACEBOOK_APP_ID", "your_facebook_app_id")
 FACEBOOK_APP_SECRET = st.secrets.get("FACEBOOK_APP_SECRET", "your_facebook_app_secret")
 REDIRECT_URI = st.secrets.get("REDIRECT_URI", "https://your-app-url.streamlit.app")
@@ -69,13 +74,13 @@ def render_facebook_login_button():
     # Check if Facebook is configured
     if FACEBOOK_APP_ID == "your_facebook_app_id" or not FACEBOOK_APP_ID:
         st.markdown("""
-        <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #d4a574;">
+        <div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #7a9b76;">
             <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
-                🔧 Facebook Integration Setup Required
+                🔗 Social Verification Available
             </div>
             <div style="color: #666; font-size: 0.9rem;">
-                Facebook login will be available once the administrator configures the Facebook app credentials.
-                For now, please use the manual registration form below.
+                Build trust with customers by sharing your social media profiles below. 
+                This helps verify your identity and professionalism.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -149,6 +154,83 @@ def render_facebook_login_button():
             st.error("Please enter a valid Facebook profile URL")
     
     st.markdown("</div></div>", unsafe_allow_html=True)
+
+# Facebook Business API Functions
+def get_facebook_page_info():
+    """Get Facebook page information"""
+    if FACEBOOK_ACCESS_TOKEN == "your_page_access_token":
+        return None
+    
+    try:
+        url = f"https://graph.facebook.com/v18.0/{FACEBOOK_PAGE_ID}"
+        params = {
+            'access_token': FACEBOOK_ACCESS_TOKEN,
+            'fields': 'name,followers_count,fan_count,picture,about,website,phone,location'
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except Exception as e:
+        st.error(f"Error fetching page info: {e}")
+        return None
+
+def get_facebook_page_insights():
+    """Get Facebook page analytics and insights"""
+    if FACEBOOK_ACCESS_TOKEN == "your_page_access_token":
+        return None
+    
+    try:
+        url = f"https://graph.facebook.com/v18.0/{FACEBOOK_PAGE_ID}/insights"
+        params = {
+            'access_token': FACEBOOK_ACCESS_TOKEN,
+            'metric': 'page_views,page_impressions,page_engaged_users,page_fan_adds',
+            'period': 'day',
+            'since': (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d'),
+            'until': datetime.now().strftime('%Y-%m-%d')
+        }
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            return response.json()
+        return None
+    except Exception as e:
+        st.error(f"Error fetching insights: {e}")
+        return None
+
+def create_facebook_post(message, link=None):
+    """Create a post on Facebook page"""
+    if FACEBOOK_ACCESS_TOKEN == "your_page_access_token":
+        return {"error": "Access token not configured"}
+    
+    try:
+        url = f"https://graph.facebook.com/v18.0/{FACEBOOK_PAGE_ID}/feed"
+        params = {
+            'access_token': FACEBOOK_ACCESS_TOKEN,
+            'message': message
+        }
+        if link:
+            params['link'] = link
+            
+        response = requests.post(url, params=params)
+        return response.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+def get_ad_targeting_suggestions(keywords):
+    """Get Facebook ad targeting suggestions for cleaner recruitment"""
+    if FACEBOOK_ACCESS_TOKEN == "your_page_access_token":
+        return []
+    
+    # This is a simplified version - in production you'd use Facebook Marketing API
+    suggestions = [
+        {"name": "Cleaning Services", "type": "interest", "audience_size": "2.5M"},
+        {"name": "House Cleaning", "type": "interest", "audience_size": "1.8M"},
+        {"name": "Professional Cleaning", "type": "interest", "audience_size": "800K"},
+        {"name": "Freelance Work", "type": "interest", "audience_size": "5.2M"},
+        {"name": "Part-time Jobs", "type": "interest", "audience_size": "12.1M"},
+        {"name": "Flexible Schedule", "type": "behavior", "audience_size": "3.4M"}
+    ]
+    return suggestions
 
 # Page configuration
 st.set_page_config(
@@ -1009,6 +1091,12 @@ if 'facebook_user' not in st.session_state:
     st.session_state.facebook_user = None
 if 'facebook_authenticated' not in st.session_state:
     st.session_state.facebook_authenticated = False
+if 'admin_mode' not in st.session_state:
+    st.session_state.admin_mode = False
+if 'facebook_campaigns' not in st.session_state:
+    st.session_state.facebook_campaigns = []
+if 'admin_password' not in st.session_state:
+    st.session_state.admin_password = ""
 
 # Handle Facebook OAuth callback
 def handle_facebook_callback():
@@ -1730,6 +1818,11 @@ with col6:
         st.session_state.page = "profile"
         st.rerun()
 
+# Admin access (hidden button)
+if st.button("🔐", key="admin_access", help="Admin Panel", use_container_width=True):
+    st.session_state.page = "admin"
+    st.rerun()
+
 # Style the navigation buttons for mobile
 st.markdown("""
 <style>
@@ -1858,6 +1951,407 @@ def favorites_page():
     # Display favorite cleaners
     for _, cleaner in favorite_cleaners.iterrows():
         display_mobile_cleaner_card(cleaner)
+
+def admin_panel():
+    """Powerful admin panel for Facebook business integration"""
+    
+    # Admin authentication
+    if not st.session_state.admin_mode:
+        st.markdown("""
+        <div class="app-header">
+            <div class="app-title">🔐 Admin Panel</div>
+            <div class="app-subtitle">Facebook Business & Cleaner Management</div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        admin_password = st.text_input("Admin Password", type="password", 
+                                      placeholder="Enter admin password")
+        
+        if st.button("🔑 Login to Admin Panel", use_container_width=True):
+            # Simple password check (in production, use proper authentication)
+            if admin_password == st.secrets.get("ADMIN_PASSWORD", "cleanfee_admin_2024"):
+                st.session_state.admin_mode = True
+                st.session_state.admin_password = admin_password
+                st.success("✅ Admin access granted!")
+                st.rerun()
+            else:
+                st.error("❌ Invalid password")
+        
+        st.markdown("""
+        <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 2rem 0; border-left: 4px solid #d4a574;">
+            <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                🔧 Admin Panel Features
+            </div>
+            <ul style="color: #666; font-size: 0.9rem; margin: 0; padding-left: 1rem;">
+                <li>Facebook Page Management & Analytics</li>
+                <li>Cleaner Application Review & Approval</li>
+                <li>Facebook Ads Campaign Creation</li>
+                <li>Targeting System for Cleaner Recruitment</li>
+                <li>Business Analytics & Reporting</li>
+                <li>System Configuration & Settings</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+        return
+    
+    # Admin panel main interface
+    st.markdown("""
+    <div class="app-header">
+        <div class="app-title">🎛️ Admin Dashboard</div>
+        <div class="app-subtitle">Facebook Business Integration & Management</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Admin navigation tabs
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "📊 Facebook Analytics", 
+        "🧹 Cleaner Management", 
+        "📢 Facebook Ads", 
+        "🎯 Targeting System",
+        "⚙️ Settings"
+    ])
+    
+    with tab1:
+        show_facebook_analytics()
+    
+    with tab2:
+        show_cleaner_management()
+    
+    with tab3:
+        show_facebook_ads_manager()
+    
+    with tab4:
+        show_targeting_system()
+    
+    with tab5:
+        show_admin_settings()
+
+def show_facebook_analytics():
+    """Facebook page analytics dashboard"""
+    st.subheader("📊 Facebook Page Analytics")
+    
+    # Get page info
+    page_info = get_facebook_page_info()
+    
+    if page_info:
+        # Page overview
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown(f"""
+            <div class="stats-card">
+                <div class="stats-number">{page_info.get('fan_count', 'N/A')}</div>
+                <div class="stats-label">Page Likes</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown(f"""
+            <div class="stats-card">
+                <div class="stats-number">{page_info.get('followers_count', 'N/A')}</div>
+                <div class="stats-label">Followers</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            st.markdown(f"""
+            <div class="stats-card">
+                <div class="stats-number">🔗</div>
+                <div class="stats-label">Connected</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Page details
+        st.markdown(f"""
+        <div class="form-section">
+            <div class="form-section-title">
+                📘 Connected Facebook Page
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0;">
+                <img src="{page_info.get('picture', {}).get('data', {}).get('url', '')}" 
+                     style="width: 60px; height: 60px; border-radius: 50%;">
+                <div>
+                    <div style="font-weight: 600; font-size: 1.1rem;">{page_info.get('name', 'Unknown')}</div>
+                    <div style="color: #666; margin: 0.2rem 0;">{page_info.get('about', '')}</div>
+                    <div style="color: #8f7a67; font-size: 0.9rem;">
+                        🌐 {page_info.get('website', 'No website')} • 
+                        📞 {page_info.get('phone', 'No phone')}
+                    </div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Analytics charts (mock data for demo)
+        st.subheader("📈 Engagement Trends (Last 30 Days)")
+        
+        # Create sample data for demo
+        import random
+        dates = [datetime.now() - timedelta(days=i) for i in range(30, 0, -1)]
+        
+        engagement_data = pd.DataFrame({
+            'Date': dates,
+            'Page Views': [random.randint(50, 200) for _ in range(30)],
+            'Impressions': [random.randint(200, 800) for _ in range(30)],
+            'Engaged Users': [random.randint(20, 100) for _ in range(30)]
+        })
+        
+        fig = px.line(engagement_data, x='Date', y=['Page Views', 'Impressions', 'Engaged Users'],
+                     title="Facebook Page Performance")
+        st.plotly_chart(fig, use_container_width=True)
+        
+    else:
+        st.markdown("""
+        <div style="background: #fff3cd; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #d4a574;">
+            <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                🔧 Facebook Page Not Connected
+            </div>
+            <div style="color: #666; font-size: 0.9rem;">
+                Configure your Facebook page access token in Settings to view analytics.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+def show_cleaner_management():
+    """Cleaner application management"""
+    st.subheader("🧹 Cleaner Application Management")
+    
+    # Application stats
+    total_applications = len(st.session_state.cleaner_applications)
+    pending_count = len([app for app in st.session_state.cleaner_applications 
+                        if app.get('status') == 'pending'])
+    approved_count = len([app for app in st.session_state.cleaner_applications 
+                         if app.get('status') == 'approved'])
+    
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown(f"""
+        <div class="stats-card">
+            <div class="stats-number">{total_applications}</div>
+            <div class="stats-label">Total Applications</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div class="stats-card" style="background: linear-gradient(135deg, #d4a574, #c8956d);">
+            <div class="stats-number">{pending_count}</div>
+            <div class="stats-label">Pending Review</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown(f"""
+        <div class="stats-card" style="background: linear-gradient(135deg, #7a9b76, #9bb99d);">
+            <div class="stats-number">{approved_count}</div>
+            <div class="stats-label">Approved</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        rejected_count = total_applications - pending_count - approved_count
+        st.markdown(f"""
+        <div class="stats-card" style="background: linear-gradient(135deg, #d49999, #c78888);">
+            <div class="stats-number">{rejected_count}</div>
+            <div class="stats-label">Rejected</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Application list
+    if st.session_state.cleaner_applications:
+        st.subheader("📋 Recent Applications")
+        
+        for i, app in enumerate(st.session_state.cleaner_applications[-5:]):  # Show last 5
+            status_color = {
+                'pending': '#d4a574',
+                'approved': '#7a9b76', 
+                'rejected': '#d49999'
+            }.get(app.get('status', 'pending'), '#d4a574')
+            
+            st.markdown(f"""
+            <div style="background: #fdfcfb; border-radius: 8px; padding: 1rem; margin: 0.5rem 0; border-left: 4px solid {status_color};">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600;">{app.get('first_name', '')} {app.get('last_name', '')}</div>
+                        <div style="color: #666; font-size: 0.9rem;">{app.get('email', '')} • {app.get('phone', '')}</div>
+                        <div style="color: #666; font-size: 0.8rem;">Applied: {app.get('application_date', 'Unknown')}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="background: {status_color}; color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;">
+                            {app.get('status', 'pending').title()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No cleaner applications yet.")
+
+def show_facebook_ads_manager():
+    """Facebook ads campaign manager"""
+    st.subheader("📢 Facebook Ads Campaign Manager")
+    
+    # Campaign creation
+    st.markdown("""
+    <div class="form-section">
+        <div class="form-section-title">
+            🚀 Create Cleaner Recruitment Campaign
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        campaign_name = st.text_input("Campaign Name", 
+                                     placeholder="e.g., 'Cleaner Recruitment - December 2024'")
+        campaign_objective = st.selectbox("Campaign Objective", [
+            "Increase App Installs",
+            "Drive Website Traffic", 
+            "Generate Leads",
+            "Increase Brand Awareness"
+        ])
+        target_audience = st.selectbox("Target Audience", [
+            "Professional Cleaners",
+            "Part-time Workers",
+            "Freelancers",
+            "Job Seekers",
+            "Custom Audience"
+        ])
+    
+    with col2:
+        daily_budget = st.number_input("Daily Budget ($)", min_value=5, max_value=1000, value=50)
+        campaign_duration = st.number_input("Campaign Duration (days)", min_value=1, max_value=30, value=7)
+        
+        geographic_target = st.text_input("Geographic Target", 
+                                         placeholder="e.g., 'New York, NY'")
+    
+    # Ad creative
+    st.subheader("🎨 Ad Creative")
+    ad_headline = st.text_input("Ad Headline", 
+                               placeholder="Join CleanFee - Earn $20-35/hour Cleaning")
+    ad_description = st.text_area("Ad Description", 
+                                 placeholder="Flexible schedule, weekly pay, and great customers await you!")
+    
+    # Call to action
+    cta_button = st.selectbox("Call to Action", [
+        "Apply Now",
+        "Learn More", 
+        "Sign Up",
+        "Get Started"
+    ])
+    
+    if st.button("🚀 Create Campaign Preview", use_container_width=True):
+        st.markdown("""
+        <div style="background: #e8f5e8; padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid #7a9b76;">
+            <div style="font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem;">
+                ✅ Campaign Preview Created
+            </div>
+            <div style="color: #666; font-size: 0.9rem;">
+                Campaign settings saved. Ready for Facebook Ads Manager integration.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Store campaign data
+        campaign_data = {
+            'name': campaign_name,
+            'objective': campaign_objective,
+            'audience': target_audience,
+            'budget': daily_budget,
+            'duration': campaign_duration,
+            'location': geographic_target,
+            'headline': ad_headline,
+            'description': ad_description,
+            'cta': cta_button,
+            'created_date': datetime.now().isoformat()
+        }
+        st.session_state.facebook_campaigns.append(campaign_data)
+
+def show_targeting_system():
+    """Advanced targeting system for cleaner recruitment"""
+    st.subheader("🎯 Advanced Targeting System")
+    
+    # Targeting suggestions
+    suggestions = get_ad_targeting_suggestions(['cleaning', 'freelance'])
+    
+    st.markdown("""
+    <div class="form-section">
+        <div class="form-section-title">
+            🎯 Recommended Targeting Options
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    for suggestion in suggestions:
+        col1, col2, col3 = st.columns([3, 2, 1])
+        with col1:
+            st.write(f"**{suggestion['name']}**")
+        with col2:
+            st.write(f"Type: {suggestion['type']}")
+        with col3:
+            st.write(f"Size: {suggestion['audience_size']}")
+    
+    # Custom targeting
+    st.subheader("🔧 Custom Targeting")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.multiselect("Interests", [
+            "Cleaning Services", "House Cleaning", "Commercial Cleaning",
+            "Freelance Work", "Part-time Jobs", "Flexible Schedule",
+            "Entrepreneurship", "Small Business"
+        ])
+        
+        st.multiselect("Behaviors", [
+            "Job Seekers", "Frequent Travelers", "Small Business Owners",
+            "Mobile Device Users", "Online Shoppers"
+        ])
+    
+    with col2:
+        st.slider("Age Range", 18, 65, (25, 45))
+        st.multiselect("Location Type", [
+            "Urban Areas", "Suburban Areas", "Cities", "Metropolitan Areas"
+        ])
+
+def show_admin_settings():
+    """Admin system settings"""
+    st.subheader("⚙️ System Settings")
+    
+    # Facebook configuration
+    st.markdown("""
+    <div class="form-section">
+        <div class="form-section-title">
+            📘 Facebook Integration Settings
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.text_input("Facebook Page ID", value=FACEBOOK_PAGE_ID, disabled=True)
+    
+    if FACEBOOK_ACCESS_TOKEN != "your_page_access_token":
+        st.success("✅ Facebook Page Access Token: Configured")
+    else:
+        st.warning("⚠️ Facebook Page Access Token: Not configured")
+    
+    # System configuration
+    st.subheader("🔧 Application Settings")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.number_input("Auto-approve applications after (days)", value=3, min_value=1)
+        st.checkbox("Require background check", value=True)
+        st.checkbox("Require references", value=True)
+    
+    with col2:
+        st.number_input("Minimum experience (years)", value=0, min_value=0)
+        st.selectbox("Default hourly rate", ["$20", "$25", "$30", "$35"])
+        st.checkbox("Email notifications enabled", value=True)
+    
+    # Logout
+    if st.button("🚪 Logout from Admin Panel"):
+        st.session_state.admin_mode = False
+        st.session_state.admin_password = ""
+        st.rerun()
 
 def profile_page():
     """Display user profile page"""
@@ -2798,5 +3292,7 @@ elif st.session_state.page == 'become_cleaner':
     become_cleaner_page()
 elif st.session_state.page == 'profile':
     profile_page()
+elif st.session_state.page == 'admin':
+    admin_panel()
 
 # Navigation is now handled by the column buttons above 
