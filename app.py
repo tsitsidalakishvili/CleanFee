@@ -32,7 +32,7 @@ st.markdown("""
     }
     
     .block-container {
-        padding: 1rem 1rem 5rem 1rem !important;
+        padding: 0.5rem 0.5rem 5rem 0.5rem !important;
         max-width: 100% !important;
     }
     
@@ -40,32 +40,32 @@ st.markdown("""
     .app-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 1.5rem 1rem;
-        margin: -1rem -1rem 1rem -1rem;
+        padding: 1rem 0.5rem;
+        margin: -0.5rem -0.5rem 0.5rem -0.5rem;
         text-align: center;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .app-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         font-weight: 700;
         margin: 0;
         text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     
     .app-subtitle {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         opacity: 0.9;
-        margin: 0.3rem 0 0 0;
+        margin: 0.2rem 0 0 0;
     }
     
     /* Mobile cleaner cards */
     .mobile-cleaner-card {
         background: white;
-        border-radius: 16px;
-        padding: 1rem;
-        margin: 1rem 0;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border-radius: 12px;
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
         border: none;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
@@ -76,62 +76,62 @@ st.markdown("""
     }
     
     .cleaner-avatar {
-        width: 70px;
-        height: 70px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         object-fit: cover;
-        border: 3px solid #f0f0f0;
+        border: 2px solid #f0f0f0;
     }
     
     .cleaner-info {
         flex: 1;
-        margin-left: 1rem;
+        margin-left: 0.8rem;
     }
     
     .cleaner-name {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 600;
         color: #2c3e50;
-        margin: 0 0 0.3rem 0;
+        margin: 0 0 0.2rem 0;
     }
     
     .cleaner-rating {
         display: flex;
         align-items: center;
-        margin: 0.3rem 0;
+        margin: 0.2rem 0;
     }
     
     .rating-text {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         color: #666;
-        margin-left: 0.5rem;
+        margin-left: 0.3rem;
     }
     
     .cleaner-price {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: #27ae60;
-        margin: 0.5rem 0;
+        margin: 0.2rem 0;
     }
     
     .cleaner-experience {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         color: #7f8c8d;
         background: #f8f9fa;
-        padding: 0.3rem 0.6rem;
-        border-radius: 12px;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
         display: inline-block;
-        margin: 0.3rem 0;
+        margin: 0.2rem 0;
     }
     
     /* Mobile skill tags */
     .mobile-skill-tag {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
-        padding: 0.3rem 0.7rem;
-        border-radius: 15px;
-        font-size: 0.7rem;
-        margin: 0.2rem 0.3rem 0.2rem 0;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.65rem;
+        margin: 0.1rem 0.2rem 0.1rem 0;
         display: inline-block;
         font-weight: 500;
     }
@@ -301,16 +301,134 @@ st.markdown("""
     /* Responsive design */
     @media (max-width: 768px) {
         .block-container {
-            padding: 0.5rem 0.5rem 5rem 0.5rem !important;
+            padding: 0.3rem 0.3rem 5rem 0.3rem !important;
         }
         
         .app-header {
-            margin: -0.5rem -0.5rem 1rem -0.5rem;
+            margin: -0.3rem -0.3rem 0.3rem -0.3rem;
+            padding: 0.8rem 0.3rem;
+        }
+        
+        .app-title {
+            font-size: 1.3rem;
+        }
+        
+        .app-subtitle {
+            font-size: 0.75rem;
         }
         
         .mobile-cleaner-card {
-            margin: 0.8rem 0;
+            margin: 0.3rem 0;
+            padding: 0.6rem;
+            border-radius: 10px;
+        }
+        
+        .cleaner-avatar {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .cleaner-info {
+            margin-left: 0.6rem;
+        }
+        
+        .cleaner-name {
+            font-size: 0.9rem;
+            margin: 0 0 0.1rem 0;
+        }
+        
+        .cleaner-price {
+            font-size: 1rem;
+            margin: 0.1rem 0;
+        }
+        
+        .rating-text {
+            font-size: 0.7rem;
+        }
+        
+        .cleaner-experience {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            margin: 0.1rem 0;
+        }
+        
+        .mobile-skill-tag {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.4rem;
+            margin: 0.1rem 0.15rem 0.1rem 0;
+        }
+        
+        .stats-card {
+            margin: 0.2rem;
             padding: 0.8rem;
+        }
+        
+        .stats-number {
+            font-size: 1.5rem;
+        }
+        
+        .stats-label {
+            font-size: 0.7rem;
+        }
+        
+        .application-step {
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .form-section {
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .earning-estimate {
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+        }
+        
+        .earning-amount {
+            font-size: 1.6rem;
+        }
+        
+        .requirement-list {
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+        }
+        
+        .mobile-review-card {
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+        }
+    }
+    
+    /* Extra small devices (phones in portrait) */
+    @media (max-width: 480px) {
+        .block-container {
+            padding: 0.2rem 0.2rem 5rem 0.2rem !important;
+        }
+        
+        .app-header {
+            margin: -0.2rem -0.2rem 0.2rem -0.2rem;
+            padding: 0.6rem 0.2rem;
+        }
+        
+        .mobile-cleaner-card {
+            margin: 0.2rem 0;
+            padding: 0.5rem;
+        }
+        
+        .cleaner-avatar {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .cleaner-info {
+            margin-left: 0.5rem;
+        }
+        
+        .application-step {
+            padding: 0.8rem;
+            margin: 0.3rem 0;
         }
     }
     
@@ -820,13 +938,13 @@ def home_page():
     </div>
     """, unsafe_allow_html=True)
     
-    # User stats dashboard
+    # User stats dashboard (compact on mobile)
     total_spent = st.session_state.user_profile['total_spent']
     total_bookings = len(st.session_state.bookings) + len(st.session_state.completed_bookings)
     favorite_count = len(st.session_state.favorites)
     
     if total_bookings > 0 or favorite_count > 0:
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3 = st.columns(3, gap="small")
         with col1:
             st.markdown(f"""
             <div class="stats-card">
@@ -851,15 +969,8 @@ def home_page():
             </div>
             """, unsafe_allow_html=True)
     
-    # Advanced search bar
-    st.markdown("""
-    <div class="search-container">
-        <input type="text" class="search-input" placeholder="🔍 Search cleaners by name, skills, or location..." id="search_input">
-        <div class="search-icon">🔍</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    search_query = st.text_input("Search cleaners", label_visibility="collapsed", 
+    # Advanced search bar (compact)
+    search_query = st.text_input("🔍 Search cleaners", 
                                 placeholder="Search by name, skills, or experience...", 
                                 key="search_cleaners")
     
