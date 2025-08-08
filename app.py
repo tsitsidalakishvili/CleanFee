@@ -268,12 +268,12 @@ st.markdown("""
     
     /* App header */
     .app-header {
-        background: linear-gradient(135deg, #f8f4f0 0%, #e8ddd4 100%);
-        color: #5d4e37;
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+        color: #0f172a;
         padding: 1rem 0.5rem;
         margin: -0.5rem -0.5rem 0.5rem -0.5rem;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(93, 78, 55, 0.1);
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
     }
     
     .app-title {
@@ -340,14 +340,14 @@ st.markdown("""
     .cleaner-price {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #7a9b76;
+        color: #2e7d32;
         margin: 0.2rem 0;
     }
     
     .cleaner-experience {
         font-size: 0.7rem;
-        color: #8a7968;
-        background: #f7f5f3;
+        color: #475569;
+        background: #f1f5f9;
         padding: 0.2rem 0.5rem;
         border-radius: 10px;
         display: inline-block;
@@ -356,8 +356,8 @@ st.markdown("""
     
     /* Mobile skill tags */
     .mobile-skill-tag {
-        background: linear-gradient(135deg, #d4c5b9, #c7b299);
-        color: #5d4e37;
+        background: #eef2f7;
+        color: #065f46;
         padding: 0.2rem 0.5rem;
         border-radius: 12px;
         font-size: 0.65rem;
@@ -368,7 +368,7 @@ st.markdown("""
     
     /* Mobile buttons */
     .mobile-btn {
-        background: linear-gradient(135deg, #a8998a, #8f7a67);
+        background: linear-gradient(135deg, #059669, #10b981);
         color: white;
         border: none;
         border-radius: 25px;
@@ -379,23 +379,23 @@ st.markdown("""
         margin: 0.3rem 0;
         cursor: pointer;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 10px rgba(168, 153, 138, 0.3);
+        box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
     }
     
     .mobile-btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 15px rgba(168, 153, 138, 0.4);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
     }
     
     .mobile-btn-secondary {
         background: transparent;
-        color: #8f7a67;
-        border: 2px solid #8f7a67;
+        color: #2e7d32;
+        border: 2px solid #2e7d32;
         box-shadow: none;
     }
     
     .mobile-btn-secondary:hover {
-        background: #8f7a67;
+        background: #2e7d32;
         color: white;
     }
     
@@ -435,7 +435,7 @@ st.markdown("""
     }
     
     .nav-item.active {
-        color: #8f7a67;
+        color: #2e7d32;
     }
     
     .nav-icon {
@@ -481,24 +481,24 @@ st.markdown("""
     
     /* Success messages */
     .mobile-success {
-        background: linear-gradient(135deg, #9bb99d, #7a9b76);
+        background: linear-gradient(135deg, #059669, #10b981);
         color: white;
         padding: 1rem;
         border-radius: 16px;
         margin: 1rem 0;
         text-align: center;
         font-weight: 500;
-        box-shadow: 0 4px 15px rgba(122, 155, 118, 0.3);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
     
     /* Review cards */
     .mobile-review-card {
-        background: #fdfcfb;
+        background: #ffffff;
         border-radius: 12px;
         padding: 1rem;
         margin: 0.8rem 0;
-        box-shadow: 0 2px 8px rgba(93, 78, 55, 0.06);
-        border-left: 4px solid #a8998a;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+        border-left: 4px solid #2e7d32;
     }
     
     .review-header {
@@ -755,8 +755,8 @@ st.markdown("""
     }
     
     .search-input:focus {
-        border-color: #a8998a;
-        box-shadow: 0 4px 15px rgba(168, 153, 138, 0.2);
+        border-color: #059669;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         outline: none;
     }
     
@@ -765,7 +765,7 @@ st.markdown("""
         right: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #a8998a;
+        color: #059669;
         font-size: 1.2rem;
     }
     
@@ -790,7 +790,7 @@ st.markdown("""
     
     /* Notification badge */
     .notification-badge {
-        background: linear-gradient(135deg, #d4a574, #c8956d);
+        background: linear-gradient(135deg, #059669, #10b981);
         color: white;
         border-radius: 50%;
         width: 20px;
@@ -837,7 +837,7 @@ st.markdown("""
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        background: #7a9b76;
+        background: #059669;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -852,12 +852,12 @@ st.markdown("""
     
     /* Enhanced form styling */
     .form-section {
-        background: #fdfcfb;
+        background: #ffffff;
         border-radius: 16px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 4px 20px rgba(93, 78, 55, 0.08);
-        border-left: 4px solid #a8998a;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+        border-left: 4px solid #2e7d32;
     }
     
     .form-section-title {
@@ -872,13 +872,13 @@ st.markdown("""
     
     /* Stats cards */
     .stats-card {
-        background: linear-gradient(135deg, #d4c5b9, #a8998a);
+        background: linear-gradient(135deg, #34d399, #059669);
         color: white;
         border-radius: 16px;
         padding: 1rem;
         text-align: center;
         margin: 0.5rem;
-        box-shadow: 0 4px 15px rgba(168, 153, 138, 0.3);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
     }
     
     .stats-number {
@@ -908,9 +908,9 @@ st.markdown("""
     }
     
     .sort-pill.active {
-        background: linear-gradient(135deg, #a8998a, #8f7a67);
+        background: linear-gradient(135deg, #059669, #10b981);
         color: white;
-        border-color: #a8998a;
+        border-color: #059669;
         transform: scale(1.05);
     }
     
@@ -921,12 +921,12 @@ st.markdown("""
     
     /* Cleaner application specific styles */
     .application-step {
-        background: #fdfcfb;
+        background: #ffffff;
         border-radius: 16px;
         padding: 1.5rem;
         margin: 1rem 0;
-        box-shadow: 0 4px 20px rgba(93, 78, 55, 0.08);
-        border-left: 4px solid #7a9b76;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+        border-left: 4px solid #2e7d32;
     }
     
     .step-header {
@@ -964,8 +964,8 @@ st.markdown("""
     }
     
     .verification-item.verified {
-        border-color: #7a9b76;
-        background: #e8f5e8;
+        border-color: #2e7d32;
+        background: #e7f6ec;
     }
     
     .verification-item.pending {
@@ -989,8 +989,8 @@ st.markdown("""
     }
     
     .upload-area:hover {
-        border-color: #667eea;
-        background: #f0f4ff;
+        border-color: #2e7d32;
+        background: #e6f9ef;
     }
     
     .upload-area.dragover {
@@ -1009,7 +1009,7 @@ st.markdown("""
     
     .progress-fill {
         height: 100%;
-        background: linear-gradient(135deg, #27ae60, #2ecc71);
+        background: linear-gradient(135deg, #059669, #10b981);
         transition: width 0.3s ease;
     }
     
@@ -1033,7 +1033,7 @@ st.markdown("""
     }
     
     .application-summary {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #065f46, #10b981);
         color: white;
         border-radius: 16px;
         padding: 1.5rem;
@@ -1053,7 +1053,7 @@ st.markdown("""
     .earning-amount {
         font-size: 2rem;
         font-weight: 700;
-        color: #27ae60;
+        color: #059669;
         margin: 0.5rem 0;
     }
 </style>

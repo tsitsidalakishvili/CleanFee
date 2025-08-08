@@ -80,13 +80,43 @@ A modern, mobile-first Streamlit web application for booking professional home c
 
 ```
 CleanFee/
-├── app.py                 # Main Streamlit application
-├── requirements.txt       # Python dependencies
-├── .gitignore            # Git ignore file
+├── app.py                      # Streamlit frontend (mobile-first)
+├── backend/                   # FastAPI backend (new)
+│   ├── main.py               # FastAPI app factory and router mounts
+│   └── routers/              # Route modules
+│       ├── cleaners.py
+│       ├── bookings.py
+│       ├── applications.py
+│       └── facebook.py
+├── requirements.txt           # Python dependencies
+├── .gitignore                 # Git ignore file
 ├── data/
-│   └── cleaners_data.py  # Cleaner profiles and data
-└── README.md             # This documentation
+│   └── cleaners_data.py      # Cleaner profiles and data
+└── README.md                  # This documentation
 ```
+
+## 🔌 Backend API (FastAPI)
+
+Run the API locally:
+
+```bash
+pip install -r requirements.txt
+uvicorn backend.main:app --reload --port 8000
+```
+
+Key endpoints (base: http://127.0.0.1:8000/api):
+- GET `/cleaners` `?q=&min_rating=&max_rate=`
+- GET `/cleaners/{id}`
+- GET `/cleaners/{id}/reviews`
+- GET `/bookings`
+- POST `/bookings`
+- GET `/applications`
+- POST `/applications`
+- GET `/facebook/page_info`
+- GET `/facebook/insights`
+- POST `/facebook/post` (message as form/query param)
+
+CORS is enabled for Streamlit localhost and Streamlit Cloud.
 
 ## 🎨 Design Features
 
