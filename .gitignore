@@ -158,8 +158,9 @@ cython_debug/
 #  project, it is recommended to include this in the .gitignore file.
 .idea/
 
-# Streamlit
-.streamlit/
+# Streamlit (keep secrets ignored, allow config)
+.streamlit/*
+!.streamlit/config.toml
 
 # MacOS
 .DS_Store
